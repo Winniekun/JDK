@@ -11,8 +11,8 @@
 #### collection
 
 1. list
-   1. * [x] ArrayList
-   2. * [x] LinkedList
+   1. * [x] [ArrayList](https://github.com/KongWiki/JDK/tree/master/src/com/wkk/jdk/collection/arraylist)
+   2. * [x] [LinkedList](https://github.com/KongWiki/JDK/tree/master/src/com/wkk/jdk/collection/linkedlist)
    3. * [ ] Vector
 2. set
    1. HashSet
@@ -23,5 +23,5 @@
 
 1. HashMap
 2. HashTable
-3. * [x] TreeMap
+3. * [x] [TreeMap](https://github.com/KongWiki/JDK/tree/master/src/com/wkk/jdk/map/treemap)
 

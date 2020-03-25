@@ -79,7 +79,14 @@ static class Node<K,V> implements Map.Entry<K,V> {
 }
 ```
 
-总结: **一个节点的hash值是将key的哈希值和value的哈希值异或得到**
+#### 总结: 
+
+1. **一个节点的hash值是将key的哈希值和value的哈希值异或得到**
+2. 每个节点包含的信息
+   1. key
+   2. value
+   3. hash值
+   4. next指针（指向下一个元素）
 
 #### 树节点的构造
 
@@ -94,8 +101,6 @@ static final class TreeNode<K,V> extends LinkedHashMap.Entry<K,V> {
             super(hash, key, val, next);
         }
 ```
-
-
 
 ### 类的属性
 
@@ -122,13 +127,24 @@ transient Set<Map.Entry<K,V>> entrySet;
 transient int size;
 // 每次扩容和更改map结构的计数器
 transient int modCount;
-// threshold = 哈希桶.length * loadFactor;
+// threshold = table.length * loadFactor;
 int threshold;
 // 加载因子，用于计算哈希表元素数量的阈值。  
 final float loadFactor;
 ```
 
+#### 总结：
 
+重点的属性：
+
+1. table
+   1. Node<K,V>数组
+2. size
+   1. 存放元素的个数，注意这个不等于数组的长度。
+3. threshold
+   1. threshold = 哈希桶.length * loadFactor;
+4. loadFactor
+   1. 加载因子
 
 ### 构造方法
 
@@ -168,7 +184,8 @@ public HashMap(int initialCapacity, float loadFactor) {
     this.loadFactor = loadFactor;
     this.threshold = tableSizeFor(initialCapacity);
 }
-// 取与cap最近的且大于capde2的次方值
+// 取与cap最近的且大于cap的2的次方值
+// 比如cap为10， 则返回为16
 static final int tableSizeFor(int cap) {
     int n = cap - 1;
     // 执行或运算
@@ -194,9 +211,11 @@ public HashMap(Map<? extends K, ? extends V> m) {
 final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
         int s = m.size();
         if (s > 0) {
+            // ①
             // 如果当前的表为空
             if (table == null) { // pre-size
                 // 根据当前的元素的数量 获取阀值
+                //  1.0F 的目的，是因为下面 (int) 直接取整，避免不够
                 float ft = ((float)s / loadFactor) + 1.0F;
                 // 修正阀值的边界, 阀值<= MAXIMUM_CAPACITY
                 int t = ((ft < (float)MAXIMUM_CAPACITY) ?
@@ -205,10 +224,12 @@ final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
                 if (t > threshold)
                     threshold = tableSizeFor(t);
             }
+            // ②
             // 若是当前元素的数量大于阀值
             else if (s > threshold)
                 // 扩容
                 resize();
+            // ③
             // 遍历m 依次放入当前的表中
             for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
                 K key = e.getKey();
@@ -219,6 +240,27 @@ final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
 }
 
 ```
+
+##### **过程分析**
+
+保证table容量足够
+
+1. 为空--->①
+2. 不为空
+   1. 当前元素个数大于阀值 ---> ②
+   2. 正常 ---> ③
+
+###### ①
+
+1. 如果当前的table的为空， 也就是说是将一个hashMap放入一个新的hashMap（初始化一个hashMap）
+
+2. 然后对threshold进行修改
+   1. 利用公式计算当前的threshold，并确保其≤2^30（MAXIMUM_CAPACITY）
+   2. 如果计算出的threshold大于原先的threshold，则再次使用tableSizeFor进行计算
+
+###### ②
+
+扩容
 
 * resize()
 
@@ -235,20 +277,20 @@ final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
           int newCap, newThr = 0;
       	// 1. 如果当前的容量不为空
           if (oldCap > 0) {
-              // 如果当前的容量已经达到了上限
+              // 1.1如果当前的容量已经达到了上限
               if (oldCap >= MAXIMUM_CAPACITY) {
                   // 阀值为2^32-1
                   threshold = Integer.MAX_VALUE;
                   // 返回当前的哈希桶不再扩容
                   return oldTab;
               }
-              // 否者新的容量为原先容量的两倍
+              // 1.2否者新的容量为原先容量的两倍
               else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
                        oldCap >= DEFAULT_INITIAL_CAPACITY)// 如果旧的容量大于等于默认的初始容量						16
                   // 新的阀值也为原先的两倍
                   newThr = oldThr << 1; // double threshold
           }
-      	// 2. 如果当前表是空的，但是有阈值。代表是初始化时指定了容量、阈值的情况(上述的第三种构造方法)
+      	// 2. 如果当前表是空的，但是有阈值。代表是初始化时指定了容量、阈值的情况(上述的第二、三种构造方法)
           else if (oldThr > 0) // initial capacity was placed in threshold
               newCap = oldThr; // 新的容量为旧的阀值
           // 3. 此处的判断用于初始化 
@@ -332,69 +374,152 @@ final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
       }
   ```
 
-* putVal()
+过程分析：
 
-  ```java
+表是否为空
+
+1. 不为空时
+
+   1. 容量已达到上限
+      1. 阀值：2^32-1
+      2. 容量：不再扩容
+   2. 没有达到上限
+      1. 阀值： 原来的两倍
+      2. 容量： 原来的两倍
+
+2. 为空时
+
+   1. 阀值：12
+   2. 容量：16
+
+   
+
+3. 表为空，但阀值不为空
+
+   1. 阀值：容量*0.75
+   2. 容量：阀值 
+
+
+
+###### ③
+
+添加元素
+
+```java
+final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+               boolean evict) {
+    Node<K,V>[] tab; Node<K,V> p; int n, i;
+    if ((tab = table) == null || (n = tab.length) == 0)
+        n = (tab = resize()).length;
+    if ((p = tab[i = (n - 1) & hash]) == null)
+        tab[i] = newNode(hash, key, value, null);
+    else {
+        Node<K,V> e; K k;
+        if (p.hash == hash &&
+            ((k = p.key) == key || (key != null && key.equals(k))))
+            e = p;
+        else if (p instanceof TreeNode)
+            e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+        else {
+            for (int binCount = 0; ; ++binCount) {
+                if ((e = p.next) == null) {
+                    p.next = newNode(hash, key, value, null);
+                    if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                        treeifyBin(tab, hash);
+                    break;
+                }
+                if (e.hash == hash &&
+                    ((k = e.key) == key || (key != null && key.equals(k))))
+                    break;
+                p = e;
+            }
+        }
+        if (e != null) { // existing mapping for key
+            V oldValue = e.value;
+            if (!onlyIfAbsent || oldValue == null)
+                e.value = value;
+            afterNodeAccess(e);
+            return oldValue;
+        }
+    }
+    ++modCount;
+    if (++size > threshold)
+        resize();
+    afterNodeInsertion(evict);
+    return null;
+}
+```
+
+
+
+#### 总结
+
+![hashmap构造函数.png](https://i.loli.net/2020/03/13/5poAV8jQqEJs1Hw.png)
+
+- 初始化 `loadFactor` 为 `DEFAULT_LOAD_FACTOR = 0.75` 。
+
+- 在这些构造方法上，我们并没有看到 `table` 数组的初始化。它是**延迟**初始化，在我们开始往 HashMap 中添加 key-value 键值对时，在 `resize()` 方法中才真正初始化。
+
+- 为什么`threshold` 要返回大于等于 `initialCapacity` 的最小 2 的 N 次方？
+
+  - 在put方法中，计算table数组对应的容量，因为性能问题，都是做的位运算，计算 `table` 数组对应的位置，逻辑是 `(n - 1) & hash` ，正常情况下预想的是 `hash % (n - 1)` ，而这两者在2的N的情况下是等同的， 所以`threshold`返回的是`initialCapacity`的最下2的N次方
+
   
-  final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
-                     boolean evict) {
-          Node<K,V>[] tab; Node<K,V> p; int n, i;
-          if ((tab = table) == null || (n = tab.length) == 0)
-              n = (tab = resize()).length;
-          if ((p = tab[i = (n - 1) & hash]) == null)
-              tab[i] = newNode(hash, key, value, null);
-          else {
-              Node<K,V> e; K k;
-              if (p.hash == hash &&
-                  ((k = p.key) == key || (key != null && key.equals(k))))
-                  e = p;
-              else if (p instanceof TreeNode)
-                  e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
-              else {
-                  for (int binCount = 0; ; ++binCount) {
-                      if ((e = p.next) == null) {
-                          p.next = newNode(hash, key, value, null);
-                          if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
-                              treeifyBin(tab, hash);
-                          break;
-                      }
-                      if (e.hash == hash &&
-                          ((k = e.key) == key || (key != null && key.equals(k))))
-                          break;
-                      p = e;
-                  }
-              }
-              if (e != null) { // existing mapping for key
-                  V oldValue = e.value;
-                  if (!onlyIfAbsent || oldValue == null)
-                      e.value = value;
-                  afterNodeAccess(e);
-                  return oldValue;
-              }
-          }
-          ++modCount;
-          if (++size > threshold)
-              resize();
-          afterNodeInsertion(evict);
-          return null;
-      }
-  ```
 
-  
+### 增  put(K key, V value)
 
+```java
+public V put(K key, V value) {
+    return putVal(hash(key), key, value, false, true);
+}
+```
 
+#### **putVal(int hash, K key, V value, boolean onlyIfAbsent, boolean evict)**
 
-
-
-
-
-
-
-
-
-
-
-
+```java
+final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+               boolean evict) {
+    Node<K,V>[] tab; Node<K,V> p; int n, i;
+    if ((tab = table) == null || (n = tab.length) == 0)
+        n = (tab = resize()).length;
+    if ((p = tab[i = (n - 1) & hash]) == null)
+        tab[i] = newNode(hash, key, value, null);
+    else {
+        Node<K,V> e; K k;
+        if (p.hash == hash &&
+            ((k = p.key) == key || (key != null && key.equals(k))))
+            e = p;
+        else if (p instanceof TreeNode)
+            e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+        else {
+            for (int binCount = 0; ; ++binCount) {
+                if ((e = p.next) == null) {
+                    p.next = newNode(hash, key, value, null);
+                    if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                        treeifyBin(tab, hash);
+                    break;
+                }
+                if (e.hash == hash &&
+                    ((k = e.key) == key || (key != null && key.equals(k))))
+                    break;
+                p = e;
+            }
+        }
+        if (e != null) { // existing mapping for key
+            V oldValue = e.value;
+            if (!onlyIfAbsent || oldValue == null)
+                e.value = value;
+            afterNodeAccess(e);
+            return oldValue;
+        }
+    }
+    ++modCount;
+    if (++size > threshold)
+        resize();
+    afterNodeInsertion(evict);
+    return null;
+}
+```
 
 
 
@@ -441,11 +566,12 @@ final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
 
 #### 底层数据结构分析
 
-###### 哈希法(JDK1.8)
+##### 哈希法(JDK1.8)
 
 ```java
  static final int hash(Object key) {
         int h;
+        // ^ (h >>> 16) 高 16 位与自身进行异或计算，保证计算出来的 hash 更加离散
         return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
  }
 ```
@@ -455,3 +581,10 @@ final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
 * ^ 异或
 * \>>> 向右移动xxx位, 无视符号, 高位填0
 * \>\> 
+
+
+
+## reference
+
+* 数据结构与算法之美
+* 芋道源码

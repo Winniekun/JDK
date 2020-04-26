@@ -11,48 +11,52 @@ import java.util.TreeMap;
  * @Email: kongwiki@163.com
  */
 public class BSTMapVSTreeMap {
-    public static final int MAX = 20480;
-    private Random random = new Random();
-
+    public static final int MAX=65535;
+    private Random random=new Random();
+    // 用于测试自己编写的AVLMap和TreeMap的性能区别
+    // 主要是随机65535条数据，查看运行时间
+    // 升序插入65536条数据，查看运行时间
     @Test
-    public void testRandomTreeMap() {
-        TreeMap<Integer, String > map = new TreeMap<>();
-        for (int i = 0; i < MAX; i++) {
-            map.put(random.nextInt(MAX), random.nextInt(MAX) + "");
+    public void testBSTRandom(){
+        AVLMap<Integer, String> map=new AVLMap<Integer, String>();
+        for(int i=0;i<MAX;i++){
+            map.put(random.nextInt(MAX), random.nextInt(MAX)+"");
         }
-        for (int i = 0; i < MAX; i++) {
+        map.checkBalance();
+        for(int i=0;i<MAX;i++){
             map.get(random.nextInt(MAX));
         }
     }
     @Test
-    public void testRandomAVLMap(){
-        AVLMap<Integer, String> map = new AVLMap<>();
-        for (int i = 0; i < MAX; i++) {
-            map.put(random.nextInt(MAX), random.nextInt(MAX) + "");
+    public void testTreeMapRandom(){
+        TreeMap<Integer, String> map=new TreeMap<Integer, String>();
+        for(int i=0;i<MAX;i++){
+            map.put(random.nextInt(MAX), random.nextInt(MAX)+"");
         }
-        for (int i = 0; i < MAX; i++) {
+        for(int i=0;i<MAX;i++){
             map.get(random.nextInt(MAX));
         }
     }
     @Test
-    public void testAESCTreeMap(){
-        TreeMap<Integer, String> map = new TreeMap<>();
-        for (int i = 0; i < MAX; i++) {
-            map.put(i, i+"");
+    //
+    public void testBSTIncrement(){
+        AVLMap<Integer, String> map=new AVLMap<Integer, String>();
+        for(int i=0;i<MAX;i++){
+            map.put(i, random.nextInt(MAX)+"");
         }
-        for (int i = 0; i < MAX; i++) {
-            map.get(i);
+        map.checkBalance();
+        for(int i=0;i<MAX;i++){
+            map.get(random.nextInt(MAX));
         }
-
     }
     @Test
-    public void testAESCAVLMap(){
-        AVLMap<Integer, String> map = new AVLMap<>();
-        for (int i = 0; i < MAX; i++) {
-            map.put(i, i+"");
+    public void testTreeMapIncrement(){
+        TreeMap<Integer, String> map=new TreeMap<Integer, String>();
+        for(int i=0;i<MAX;i++){
+            map.put(i, random.nextInt(MAX)+"");
         }
-        for (int i = 0; i < MAX; i++) {
-            map.get(i);
+        for(int i=0;i<MAX;i++){
+            map.get(random.nextInt(MAX));
         }
 
     }

@@ -6,11 +6,11 @@ import java.util.Random;
 import java.util.TreeMap;
 
 /**
- * @Time: 20-2-26下午8:55
+ * @Time: 2020/4/26下午8:58
  * @Author: kongwiki
  * @Email: kongwiki@163.com
  */
-public class BSTMapVSTreeMap {
+public class AVLPerformed {
     public static final int MAX=65535;
     private Random random=new Random();
     // 用于测试自己编写的AVLMap和TreeMap的性能区别

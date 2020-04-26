@@ -5,12 +5,14 @@ import org.junit.Test;
 
 import java.util.*;
 
+import static org.junit.Assert.*;
+
 /**
- * @Time: 20-2-25上午11:29
+ * @Time: 2020/4/26下午8:57
  * @Author: kongwiki
  * @Email: kongwiki@163.com
  */
-public class TestBST {
+public class AVLMapTest {
     private Random random = new Random();
     private final int MAX1 = 16;
     // 迭代功能是否正常
@@ -70,7 +72,7 @@ public class TestBST {
         Assert.assertTrue(!map.containsValue("xxxx"));
     }
     @Test
-    // 查的性能和TreeMap的区别
+    // 查和TreeMap的是否相同
     public void testQUeryWithJDK(){
         AVLMap<Integer, String> map1=new AVLMap<Integer, String>();
         TreeMap<Integer, String> map2=new TreeMap<Integer, String>();
@@ -143,7 +145,7 @@ public class TestBST {
         }
         System.out.println();
     }
-    // 性能测试
+    // 删除和TreeMap是否相同
     @Test
     public void testRemoveWithJDK(){
         AVLMap<Integer, String> map1=new AVLMap<Integer, String>();
@@ -172,6 +174,7 @@ public class TestBST {
         }
         Assert.assertTrue(!it1.hasNext()&&!it2.hasNext());
     }
+    // 泛型测试
     @Test
     public void testPerson(){
         AVLMap<Person, Integer> map=new AVLMap<Person, Integer>(new Comparator<Person>() {
@@ -188,28 +191,5 @@ public class TestBST {
             System.out.println(itr.next().getKey());
         }
     }
-    @Test
-    public void testAVLDelete(){
-        AVLMap<Integer, String> map1=new AVLMap<Integer, String>();
-        TreeMap<Integer, String> map2=new TreeMap<Integer, String>();
-        for(int i=0;i<MAX2;i++){
-            int key=random.nextInt(MAX2);
-            String value=random.nextInt(MAX2)+"";
-            map1.put(key, value);
-            map2.put(key, value);
-        }
-        for(int i=0;i<MAX2>>1;i++){
-            int key=random.nextInt(MAX2);
-            map1.remove(key);
-            map2.remove(key);
-        }
-        map1.checkBalance();
-        Assert.assertTrue(map1.size()==map2.size());
-        Iterator<AVLEntry<Integer, String>> it1=map1.iterator();
-        Iterator<Map.Entry<Integer, String>> it2=map2.entrySet().iterator();
-        while(it1.hasNext()&&it2.hasNext()){
-            Assert.assertTrue(it1.next().getKey().equals(it2.next().getKey()));
-        }
-        Assert.assertTrue(!it1.hasNext()&&!it2.hasNext());
-    }
+
 }

@@ -1,4 +1,4 @@
-package com.wkk.jdk.collection.linkedlist;
+package com.wkk.jdk.collection.list.linkedlist;
 
 import java.util.LinkedList;
 

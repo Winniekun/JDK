@@ -1,4 +1,4 @@
-package com.wkk.jdk.collection.arraylist;
+package com.wkk.jdk.collection.list.arraylist;
 
 import java.util.Arrays;
 

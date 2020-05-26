@@ -1,7 +1,6 @@
-package com.wkk.jdk.collection.arraylist;
+package com.wkk.jdk.collection.list.arraylist;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * @Time: 19-10-15下午4:17
@@ -97,6 +96,9 @@ public class ArrayLIstTest {
 
         endTime = System.currentTimeMillis();
         System.out.println("使用ensureCapaticy方法之后: "+ (endTime -startTime));
+
+        ArrayList<Integer> list3= new ArrayList<>();
+        list.add(1);
 
     }
 }

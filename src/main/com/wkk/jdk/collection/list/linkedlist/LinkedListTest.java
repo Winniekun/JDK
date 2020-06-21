@@ -3,6 +3,7 @@ package com.wkk.jdk.collection.list.linkedlist;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * @Time: 20-2-1下午6:26

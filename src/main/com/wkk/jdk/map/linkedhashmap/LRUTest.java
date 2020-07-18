@@ -19,7 +19,7 @@ public class LRUTest {
         lru.put(5, 5);
         lru.put(6, 6);
         lru.put(7, 7);
-        System.out.println(lru.get(4));
+        System.out.println(lru.get(1));
         lru.put(666, 666);
         System.out.println(lru);
 

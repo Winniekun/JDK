@@ -11,5 +11,6 @@ import java.util.Queue;
 public class PriorityQueueForKnow {
     public static void main(String[] args) {
         Queue<Integer> queue = new PriorityQueue<>();
+
     }
 }

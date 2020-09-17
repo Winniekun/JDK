@@ -18,8 +18,11 @@ public class cc extends bbb implements aa {
 
     @Override
     public int remove() {
+        int a = 1;
         return 0;
     }
+
+
 
 
 

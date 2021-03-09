@@ -1,6 +1,6 @@
 package com.wkk.jdk.collection.list.arraylist;
 
-import com.wkk.jdk.util.ArrayListBaseUtil;
+import com.wkk.jdk.utils.ArrayListBaseUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;

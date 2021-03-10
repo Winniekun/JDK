@@ -1,5 +1,7 @@
 package com.wkk.jdk.collection.list.arraylist;
 
+import org.junit.Test;
+
 import java.util.*;
 
 /**
@@ -9,7 +11,15 @@ import java.util.*;
  */
 public class ArrayLIstTest {
 
-    public static void main(String[] args) {
+    @Test
+    public void testAdd() {
+        List<String> list = new ArrayList<>(10);
+        list.add(2, "wkk");
+        System.out.println(list.get(0));
+
+    }
+    @Test
+    public void test() {
         ArrayList<Integer> arrayList = new ArrayList<>();
         System.out.printf("Before add: arrayList.size()=%d\n", arrayList.size());
 

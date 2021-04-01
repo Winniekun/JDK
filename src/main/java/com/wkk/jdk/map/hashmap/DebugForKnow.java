@@ -1,6 +1,9 @@
 package com.wkk.jdk.map.hashmap;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Time: 20-3-18上午11:05
@@ -13,5 +16,9 @@ public class DebugForKnow {
        map.put(1,1);
         System.out.println(5 & 15);
         System.out.println(5 & 31);
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            map.containsKey(entry.getKey());
+        }
+        List<Integer> list = new ArrayList<>();
     }
 }

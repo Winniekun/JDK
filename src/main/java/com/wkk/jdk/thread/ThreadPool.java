@@ -2,6 +2,7 @@ package com.wkk.jdk.thread;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.omg.CORBA.INTERNAL;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -24,12 +25,10 @@ public class ThreadPool {
                 new LinkedBlockingQueue<Runnable>(),
                 ThreadFactoryBuilder.builder().namePrefix("single-pool-verify-").build(),
                 new ThreadPoolExecutor.AbortPolicy());
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 100; i++) {
             threadPoolExecutor.submit(()-> {
+                int b = Integer.parseInt("fsaf");
                 log.info("thread name : {}", Thread.currentThread().hashCode());
-                if (System.currentTimeMillis() % 2 == 0) {
-                    throw new RuntimeException("");
-                }
             });
         }
         threadPoolExecutor.shutdown();

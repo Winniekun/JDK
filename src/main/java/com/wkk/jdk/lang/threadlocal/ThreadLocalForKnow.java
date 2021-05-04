@@ -60,4 +60,10 @@ public class ThreadLocalForKnow {
             System.out.println("current threadLocalHashCode: " + threadLocalHashCode.get(threadLocal));
         }
     }
+
+    @Test
+    public void knowForUse() {
+        new ThreadLocal<>().set("wkk");
+
+    }
 }

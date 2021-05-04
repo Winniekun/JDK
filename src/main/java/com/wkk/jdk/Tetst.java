@@ -1,5 +1,14 @@
 package com.wkk.jdk;
 
+import org.junit.Test;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * @author weikunkun
  * @since 2021/4/7
@@ -56,9 +65,51 @@ public class Tetst {
 
     }
 
-    public static void main(String[] args) {
-        Tetst tetst = new Tetst();
-        int[] arr = {1, 1, 1, 1, 1, 2, 1};
-        tetst.search(arr, 2);
+
+    static final class Node {
+        /**
+         * Marker to indicate a node is waiting in shared mode
+         */
+        static final Node SHARED = new Node();
+        /**
+         * Marker to indicate a node is waiting in exclusive mode
+         */
+        static final Node EXCLUSIVE = null;
+        /**
+         * waitStatus value to indicate thread has cancelled
+         */
+        static final int CANCELLED = 1;
+        /**
+         * waitStatus value to indicate successor's thread needs unparking
+         */
+        static final int SIGNAL = -1;
+        /**
+         * waitStatus value to indicate thread is waiting on condition
+         */
+        static final int CONDITION = -2;
+        /**
+         * waitStatus value to indicate the next acquireShared should
+         * unconditionally propagate
+         */
+        static final int PROPAGATE = -3;
+
+        volatile int waitStatus;
+
+        volatile Node prev;
+
+        volatile Node next;
+
+        volatile Thread thread;
+
+        Node nextWaiter;
+
+        public static void main(String[] args) {
+            Tetst tetst = new Tetst();
+            int[] arr = {1, 1, 1, 1, 1, 2, 1};
+            tetst.search(arr, 2);
+            Lock lock = new ReentrantLock();
+            lock.lock();
+            lock.tryLock();
+        }
     }
 }

@@ -307,10 +307,12 @@ public class AVLMap<K, V> implements Iterable<AVLEntry<K, V>> {
     }
 
     public V remove(K key) {
+        // 先查找
         AVLEntry<K, V> entry = getEntry(key);
         if (entry == null) {
             return null;
         }
+        // 再删除
         V oldValue = entry.getValue();
         root = deleteEntry(root, key);
         size--;

@@ -1,5 +1,8 @@
 package com.wkk.jdk.collection.list.linkedlist;
 
+import org.junit.Test;
+
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,5 +25,34 @@ public class Demo {
         System.out.println(second);
         iter.remove();
 
+    }
+
+    @Test
+    public void speedGet() {
+        List<Integer> res = new LinkedList<>();
+        for (int i = 0; i < 1000000; i++) {
+            res.add(i);
+        }
+        List<Long> count = new LinkedList<>();
+        for (int i = 0; i < 100; i++) {
+            long now = System.currentTimeMillis();
+            for (Integer re : res) {
+
+            }
+            count.add(System.currentTimeMillis() - now);
+        }
+        double asDouble = count.stream().mapToDouble(i -> i).average().getAsDouble();
+        System.out.println(asDouble);
+        Iterator<Integer> iterator = res.iterator();
+        count.clear();
+        for (int i = 0; i < 100; i++) {
+            long now = System.currentTimeMillis();
+            while (iterator.hasNext()) {
+                iterator.next();
+            }
+            count.add(System.currentTimeMillis() - now);
+        }
+        asDouble = count.stream().mapToDouble(i->i).average().getAsDouble();
+        System.out.println(asDouble);
     }
 }
